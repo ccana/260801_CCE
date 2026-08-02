@@ -1,0 +1,26 @@
+# Entorno virtual
+.venv/
+venv/
+env/
+
+# Caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Streamlit / entorno local
+.streamlit/secrets.toml
+
+# IDE / sistema
+.cursor/
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+.DS_Store
+
+# Empaquetado / distribución
+dist/
+build/
+*.egg-info/

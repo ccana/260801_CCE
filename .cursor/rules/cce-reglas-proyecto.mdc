@@ -1,0 +1,24 @@
+---
+alwaysApply: true
+---
+
+Reglas del Proyecto
+
+---
+alwaysApply: true
+---
+Nombre del proyecto: 260801_CCE
+
+Objetivo: A partir de tres variables financieras proporcionadas por el usuario, calcular el Ciclo de Conversión de Efectivo (CCE).
+
+Generar un gráfico en Plotly que represente visualmente mediante barras el valor de cada una de las variables y del CCE.
+
+Luego del gráfico, generar una explicación del gráfico.
+
+Sólo se permite el uso de las siguientes bibliotecas: streamlite, numpy, pandas y plotly.
+
+El código debe estar bien estructurado y comentado, idealmente para ser utilizado en una clase de análisis financiero con Python.
+
+Evitar el uso de librerías adicionales o recursos externos no autorizados. Todas las salidas deben lucir profesionales y estar orientadas a usuarios con perfil técnico-financiero.
+
+Las visualizaciones deben incluir títulos claros, etiquetas, y estar orientadas a la interpretación gerencial de los resultados.
