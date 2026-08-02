@@ -1,10 +1,13 @@
 """
 Aplicación educativa: Ciclo de Conversión de Efectivo (CCE).
 
-Funcionalidad 1 (F01):
-- Panel educativo en el sidebar (definición y fórmula).
-- Controles, métricas e interpretación en el área principal.
-- Indicador Plotly con el valor del ciclo.
+Sidebar:
+- Panel educativo (definición y fórmula).
+- Controles (sliders) en la parte baja.
+
+Área principal (F01 + F02):
+- Resultado, métricas, indicador Plotly e interpretación.
+- Gráfico de barras horizontales y explicación del gráfico.
 """
 
 from __future__ import annotations
@@ -14,6 +17,7 @@ import streamlit as st
 
 from modulos.calculo_cce import calcular_cce, interpretar_cce
 from modulos.colores import COLOR_CCE, COLOR_CXC, COLOR_CXP, COLOR_DI
+from modulos.grafico_cce import explicacion_grafico, figura_barras_cce
 
 
 # ---------------------------------------------------------------------------
@@ -108,9 +112,10 @@ def figura_indicador_cce(cce: int) -> go.Figure:
 
 
 # ---------------------------------------------------------------------------
-# Sidebar: contenido educativo (definición y fórmula)
+# Sidebar: contenido educativo + sliders (parte baja)
 # ---------------------------------------------------------------------------
 with st.sidebar:
+    # --- Parte superior: panel educativo ---
     st.markdown("### Definición")
     st.write(
         "El **Ciclo de Conversión de Efectivo (CCE)** mide el tiempo, en días, "
@@ -138,58 +143,58 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-# ---------------------------------------------------------------------------
-# Área principal: sliders + resultado + indicador
-# ---------------------------------------------------------------------------
-st.markdown("## Simulador del CCE")
-st.write(
-    "Ajusta las variables con los controles. El CCE se recalcula de forma automática."
-)
+    # --- Parte baja: controles interactivos ---
+    st.markdown("---")
+    st.markdown("### Controles del ciclo")
+    st.caption("Ajusta las variables. El resultado se actualiza en el área principal.")
 
-st.markdown("### Variables del ciclo")
+    etiqueta_variable("DI — Días de inventario", COLOR_DI)
+    di = st.slider(
+        "DI",
+        min_value=0,
+        max_value=100,
+        value=45,
+        step=1,
+        label_visibility="collapsed",
+        help="Días promedio de inventario (0 a 100).",
+        key="slider_di",
+    )
 
-# Valores por defecto razonables para un ejemplo didáctico
-etiqueta_variable("DI — Días de inventario", COLOR_DI)
-di = st.slider(
-    "DI",
-    min_value=0,
-    max_value=100,
-    value=45,
-    step=1,
-    label_visibility="collapsed",
-    help="Días promedio de inventario (0 a 100).",
-    key="slider_di",
-)
+    etiqueta_variable("D_CxC — Días de Cuentas por Cobrar", COLOR_CXC)
+    d_cxc = st.slider(
+        "D_CxC",
+        min_value=0,
+        max_value=100,
+        value=30,
+        step=1,
+        label_visibility="collapsed",
+        help="Días promedio de cuentas por cobrar (0 a 100).",
+        key="slider_cxc",
+    )
 
-etiqueta_variable("D_CxC — Días de Cuentas por Cobrar", COLOR_CXC)
-d_cxc = st.slider(
-    "D_CxC",
-    min_value=0,
-    max_value=100,
-    value=30,
-    step=1,
-    label_visibility="collapsed",
-    help="Días promedio de cuentas por cobrar (0 a 100).",
-    key="slider_cxc",
-)
+    etiqueta_variable("D_CxP — Días de Cuentas por Pagar", COLOR_CXP)
+    d_cxp = st.slider(
+        "D_CxP",
+        min_value=0,
+        max_value=100,
+        value=25,
+        step=1,
+        label_visibility="collapsed",
+        help="Días promedio de cuentas por pagar (0 a 100).",
+        key="slider_cxp",
+    )
 
-etiqueta_variable("D_CxP — Días de Cuentas por Pagar", COLOR_CXP)
-d_cxp = st.slider(
-    "D_CxP",
-    min_value=0,
-    max_value=100,
-    value=25,
-    step=1,
-    label_visibility="collapsed",
-    help="Días promedio de cuentas por pagar (0 a 100).",
-    key="slider_cxp",
-)
-
-# Cálculo automático
+# Cálculo automático a partir de los sliders del sidebar
 cce = calcular_cce(di, d_cxc, d_cxp)
 interpretacion = interpretar_cce(cce)
 
-st.markdown("### Resultado")
+# ---------------------------------------------------------------------------
+# Área principal F01: resultado + indicador + interpretación
+# ---------------------------------------------------------------------------
+st.markdown("## Resultado del CCE")
+st.write(
+    "El valor se recalcula automáticamente según los controles del panel lateral."
+)
 st.caption(f"CCE = {di} + {d_cxc} − {d_cxp} = **{cce}** días")
 
 # Tres métricas de componentes; el CCE se muestra en el indicador Plotly
@@ -198,14 +203,12 @@ m1.metric("DI", f"{di} días")
 m2.metric("D_CxC", f"{d_cxc} días")
 m3.metric("D_CxP", f"{d_cxp} días")
 
-# Indicador Plotly del CCE
 st.plotly_chart(
     figura_indicador_cce(cce),
     width="stretch",
     config={"displayModeBar": False},
 )
 
-# Nota de interpretación según el signo
 st.markdown("### Interpretación del resultado")
 st.markdown(
     f"""
@@ -217,7 +220,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Referencia rápida de las tres condiciones
 with st.expander("Ver las tres condiciones del CCE"):
     st.markdown(
         """
@@ -228,3 +230,22 @@ with st.expander("Ver las tres condiciones del CCE"):
 | **CCE > 0** | Se necesita financiar inventario y/o cobros. |
         """
     )
+
+# ---------------------------------------------------------------------------
+# Área principal F02: visualización gráfica + explicación
+# ---------------------------------------------------------------------------
+st.markdown("---")
+st.markdown("## Visualización gráfica del CCE")
+st.write(
+    "El gráfico muestra la secuencia temporal de cada componente. "
+    "Se actualiza automáticamente al mover los controles del panel lateral."
+)
+
+st.plotly_chart(
+    figura_barras_cce(di, d_cxc, d_cxp),
+    width="stretch",
+    config={"displayModeBar": False},
+)
+
+st.markdown("### Explicación del gráfico")
+st.markdown(explicacion_grafico(di, d_cxc, d_cxp))

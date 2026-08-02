@@ -2,7 +2,7 @@
 Paleta de colores del CCE.
 
 Se define aquí para reutilizarla en F01 (sliders/métricas)
-y, más adelante, en F02 (gráfico de barras).
+y en F02 (gráfico de barras horizontales).
 """
 
 # Colores distintivos por variable (valores hex)
