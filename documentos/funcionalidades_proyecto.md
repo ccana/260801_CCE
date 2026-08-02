@@ -4,7 +4,7 @@
 
 Aplicación web educativa sobre el **Ciclo de Conversión de Efectivo (CCE)**. El objetivo es que el usuario comprenda qué es el CCE, cómo se calcula y cómo se interpreta, mediante controles interactivos y una visualización gráfica.
 
-**Stack:** Streamlit, NumPy, Pandas, Plotly.
+**Stack:** Streamlit, Plotly.
 
 **Entrada de la aplicación:** `app.py`  
 **Módulos de apoyo:** `modulos/calculo_cce.py`, `modulos/colores.py`, `modulos/grafico_cce.py`
